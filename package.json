@@ -1,0 +1,11 @@
+{
+  "name": "mllp",
+  "version": "0.0.0",
+  "description": "MLLP (HL7) implementation in Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dmitry Kachaev <dmitry.kachaev@gmail.com> (http://github.com/kachok)",
+  "license": "Apache-2.0"
+}
