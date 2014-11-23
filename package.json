@@ -1,6 +1,6 @@
 {
-  "name": "mllp",
-  "version": "0.0.0",
+  "name": "mllp-node",
+  "version": "0.0.1",
   "description": "MLLP (HL7) implementation in Node.js",
   "main": "index.js",
   "scripts": {
