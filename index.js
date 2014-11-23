@@ -1,5 +1,5 @@
 var net = require('net');
-var hl7 = require('../hl7/index.js');
+var hl7 = require('hl7');
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
 
