@@ -49,7 +49,7 @@ function MLLPServer(host, port) {
             data = data.substring(1, data.length - 3);
             var data2 = hl7.parseString(data);
 
-            self.emit('hl7', data2);
+            self.emit('hl7', data);
 
             var ack = ackn(data2, "AA");
 
