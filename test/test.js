@@ -11,7 +11,7 @@ describe('test server with client data exchange', function () {
     before(function () {
         hl7 = fs.readFileSync('./test/fixtures/test.txt').toString().split("\n").join("\r");
 
-        var server = new mllp.MLLPServer();
+        var server = new mllp.MLLPServer('127.0.0.1', 6969);
 
         server.on('hl7', function (data) {
             console.log("data received: ", data);
