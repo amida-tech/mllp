@@ -10,9 +10,6 @@ var VT = String.fromCharCode(0x0b);
 var FS = String.fromCharCode(0x1c);
 var CR = String.fromCharCode(0x0d);
 
-
-
-
 function MLLPServer(host, port) {
 
     var self = this;
@@ -20,12 +17,12 @@ function MLLPServer(host, port) {
     var HOST = host || '127.0.0.1';
     var PORT = port || 6969;
 
-    var Server = net.createServer(function(sock) {
+    var Server = net.createServer(function (sock) {
 
         console.log('CONNECTED: ' + sock.remoteAddress + ':' + sock.remotePort);
 
-
         function ackn(data, ack_type) {
+
             //get message ID
             var msg_id = data[0][10];
 
@@ -43,7 +40,7 @@ function MLLPServer(host, port) {
             return result;
         }
 
-        sock.on('data', function(data) {
+        sock.on('data', function (data) {
             data = data.toString();
             //strip separators
             data = data.substring(1, data.length - 3);
@@ -62,12 +59,11 @@ function MLLPServer(host, port) {
 
         });
 
-        sock.on('close', function(data) {
+        sock.on('close', function (data) {
             console.log('CLOSED: ' + sock.remoteAddress + ' ' + sock.remotePort);
         });
 
     });
-
 
     Server.listen(PORT, HOST);
 
