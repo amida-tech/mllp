@@ -1,10 +1,3 @@
-=Minimal Lower-Layer Protocol (MLLP)=
-
-  
-
-
-
-
 mllp
 =========
 
