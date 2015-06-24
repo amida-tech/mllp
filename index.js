@@ -10,6 +10,8 @@ var VT = String.fromCharCode(0x0b);
 var FS = String.fromCharCode(0x1c);
 var CR = String.fromCharCode(0x0d);
 
+var message = '';
+
 function MLLPServer(host, port) {
 
     var self = this;
@@ -22,7 +24,6 @@ function MLLPServer(host, port) {
         console.log('CONNECTED: ' + sock.remoteAddress + ':' + sock.remotePort);
 
         function ackn(data, ack_type) {
-
             //get message ID
             var msg_id = data[0][10];
 
@@ -42,20 +43,34 @@ function MLLPServer(host, port) {
 
         sock.on('data', function (data) {
             data = data.toString();
+
             //strip separators
-            data = data.substring(1, data.length - 2);
-            var data2 = hl7.parseString(data);
-
-            self.emit('hl7', data);
-
-            var ack = ackn(data2, "AA");
-
             console.log("DATA:\nfrom " + sock.remoteAddress + ':\n' + data.split("\r").join("\n"));
-            console.log();
+            //console.log("Message Start\r\n" + data + "\r\nMessage End\r\n");
+           
+            if (data.indexOf(VT) > -1) {
+                message = '';
+            }
+            
+            message += data.replace(VT, '');
+             
 
-            sock.write(VT + ack + FS + CR);
-            console.log("ACK:\n" + ack.split("\r").join("\n"));
-            console.log();
+            if (data.indexOf(FS + CR) > -1)
+            {
+                message = message.replace(FS + CR, '');
+                var data2 = hl7.parseString(message);
+                console.log("Message:\r\n" + message + "\r\n\r\n");
+                self.emit('hl7', message);
+                var ack = ackn(data2, "AA");
+                sock.write(VT + ack + FS + CR);
+            }
+
+            //console.log("DATA:\nfrom " + sock.remoteAddress + ':\n' + data.split("\r").join("\n"));
+            //console.log();
+
+            
+            //console.log("ACK:\n" + ack.split("\r").join("\n"));
+            //console.log();
 
         });
 
