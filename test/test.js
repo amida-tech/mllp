@@ -26,7 +26,7 @@ describe('test server with client data exchange', function () {
         client.on('data', function (data) {
             var blah = data.toString();
 
-            console.log('ack received: ', blah.substring(1, blah.length - 3).split('\r').join('\n'));
+            console.log('ack received: ', blah.substring(1, blah.length - 2).split('\r').join('\n'));
             blah = blah.split('\r');
             assert.equal(blah[1].substring(0, 7), 'MSA|AA|');
 
