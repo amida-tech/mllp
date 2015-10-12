@@ -43,7 +43,7 @@ function MLLPServer(host, port) {
         sock.on('data', function (data) {
             data = data.toString();
             //strip separators
-            data = data.substring(1, data.length - 3);
+            data = data.substring(1, data.length - 2);
             var data2 = hl7.parseString(data);
 
             self.emit('hl7', data);
