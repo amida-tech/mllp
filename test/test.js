@@ -10,47 +10,71 @@ describe('test server with client data exchange', function () {
     before(function () {
         hl7 = fs.readFileSync('./test/fixtures/test.txt').toString().split('\n').join('\r');
 
-        server = new mllp.MLLPServer('127.0.0.1', 6969);
+        server = new mllp.MLLPServer('127.0.0.1', 1234);
     });
 
-    it('sends and receives', function () {
+    describe('sending and receiving HL7 messages', function () {
+        var error;
+        var data;
 
-        var client = net.connect({
-                port: 6969
-            },
-            function () { //'connect' listener
-                console.log('client connected');
-                client.write('@' + hl7 + '@@');
+        // Sending
+        beforeEach(function (done) {
+            server.send('127.0.0.1', 1234, hl7, function (err, ackData) {
+                error = err;
+                data = ackData;
+                done();
             });
+        });
 
-        client.on('data', function (data) {
-            var blah = data.toString();
+        // Receiving
+        it('receives an HL7 ACK message without error', function () {
+            assert.equal(error, null);
+            assert.equal(data, 'MSA|AA|Q335939501T337311002');
+        });
 
-            console.log('ack received: ', blah.substring(1, blah.length - 2).split('\r').join('\n'));
-            blah = blah.split('\r');
-            assert.equal(blah[1].substring(0, 7), 'MSA|AA|');
-
-            client.end();
+        it('receives an HL7 message', function () {
+            server.on('hl7', function (data) {
+                assert.equal(hl7, data);
+            });
         });
     });
 
-    it('receives exactly the information sent', function (done) {
+    describe('sending HL7 message that errors', function () {
+        var error;
+        var data;
 
-        server.on('hl7', function (data) {
-           assert.equal(hl7, data);
-           done();
+        // Sending
+        beforeEach(function (done) {
+            // port 9999 is bogus
+            server.send('127.0.0.1', 9999, hl7, function (err, ackData) {
+                error = err;
+                data = ackData;
+                done();
+            });
         });
 
-        var client = net.connect({
-            port: 6969
-        }, function () {
-            console.log('client connected');
-            client.write('@' + hl7 + '@@');
+        // Receiving
+        it('receives an error response', function () {
+            assert.isNotNull(error);
+            assert.equal(data, null);
+        });
+    });
+
+    describe('not passing in specific host and port', function () {
+        beforeEach(function () {
+            server = new mllp.MLLPServer();
         });
 
-        client.on('data', function (dat) {
-            console.log('ack received');
-            client.end();
+        it('uses sane defaults', function (done) {
+            new net.connect({
+                // defaults that the library uses
+                host: '127.0.0.1',
+                port: 6969
+            }, function () {
+                // no need for assertion... this is the success callback
+                // if it doesn't get invoked, the test will not pass.
+                done();
+            });
         });
     });
 });

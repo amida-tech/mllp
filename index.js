@@ -56,7 +56,6 @@ function MLLPServer(host, port) {
             sock.write(VT + ack + FS + CR);
             console.log("ACK:\n" + ack.split("\r").join("\n"));
             console.log();
-
         });
 
         sock.on('close', function (data) {
@@ -65,8 +64,43 @@ function MLLPServer(host, port) {
 
     });
 
-    Server.listen(PORT, HOST);
+    self.send = function (receivingHost, receivingPort, hl7Data, callback) {
+        var sendingClient = new net.connect({
+            host: receivingHost,
+            port: receivingPort
+        }, function () {
+            console.log('Sending data to ' + receivingHost + ':' + receivingPort);
+            sendingClient.write(VT + hl7Data + FS + CR);
+        });
 
+        sendingClient.on('data', function (rawAckData) {
+            console.log(receivingHost + ':' + receivingPort + ' ACKED data');
+
+            var ackData = rawAckData
+                .toString() // Buffer -> String
+                .replace(VT, '')
+                .split('\r')[1] // Ack data
+                .replace(FS, '')
+                .replace(CR, '');
+
+            callback(null, ackData);
+            _terminate();
+        });
+
+        sendingClient.on('error', function (error) {
+            console.log(receivingHost + ':' + receivingPort + ' couldn\'t process data');
+
+            callback(error, null);
+            _terminate();
+        });
+
+        var _terminate = function () {
+            console.log('closing connection with ' + receivingHost + ':' + receivingPort);
+            sendingClient.end();
+        };
+    };
+
+    Server.listen(PORT, HOST);
 }
 
 util.inherits(MLLPServer, EventEmitter);
