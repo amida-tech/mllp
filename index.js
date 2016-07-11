@@ -43,7 +43,6 @@ function MLLPServer(host, port) {
 
         sock.on('data', function (data) {
             data = data.toString();
-
             //strip separators
             console.log("DATA:\nfrom " + sock.remoteAddress + ':\n' + data.split("\r").join("\n"));
             //console.log("Message Start\r\n" + data + "\r\nMessage End\r\n");
