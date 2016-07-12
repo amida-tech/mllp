@@ -12,6 +12,13 @@ var CR = String.fromCharCode(0x0d);
 
 var message = '';
 
+/**
+ * MLLP Server
+ * @parameter <string> host
+ * @parameter <integer> port
+ * 
+ * @fires MLLPServer#hl7  
+ */
 function MLLPServer(host, port) {
 
     var self = this;
@@ -45,7 +52,6 @@ function MLLPServer(host, port) {
             data = data.toString();
             //strip separators
             console.log("DATA:\nfrom " + sock.remoteAddress + ':\n' + data.split("\r").join("\n"));
-            //console.log("Message Start\r\n" + data + "\r\nMessage End\r\n");
 
             if (data.indexOf(VT) > -1) {
                 message = '';
@@ -57,16 +63,14 @@ function MLLPServer(host, port) {
                 message = message.replace(FS + CR, '');
                 var data2 = hl7.parseString(message);
                 console.log("Message:\r\n" + message + "\r\n\r\n");
+                /**
+                 * @event MLLPServer#hl7
+                 * @type string
+                 */
                 self.emit('hl7', message);
                 var ack = ackn(data2, "AA");
                 sock.write(VT + ack + FS + CR);
             }
-
-            //console.log("DATA:\nfrom " + sock.remoteAddress + ':\n' + data.split("\r").join("\n"));
-            //console.log();
-
-            //console.log("ACK:\n" + ack.split("\r").join("\n"));
-            //console.log();
 
         });
 
