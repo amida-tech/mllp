@@ -13,11 +13,25 @@ var CR = String.fromCharCode(0x0d);
 var message = '';
 
 /**
- * MLLP Server
- * @parameter <string> host
- * @parameter <integer> port
+ * @constructor MLLPServer
+ * @param {string} host a resolvable hostname or IP Address
+ * @param {integer} port a valid free port for the server to listen on.
  * 
  * @fires MLLPServer#hl7  
+ * 
+ * @example
+ * var server = new MLLPServer('hl7server.mydomain', 3333);
+ * 
+ * server.on('hl7', function(message) {
+ *  console.log("Message: " + message);
+ *  // INSERT Unmarshalling or Processing here
+ * });
+ * 
+ * @example
+ * <caption>An ACK is sent back to the server</caption>
+ *  MSH|^~\&|SOMELAB|SOMELAB|SOMELAB|SOMELAB|20080511103530||ORU^R01|Q335939501T337311002|P|2.3|||
+ *  MSA|AA|Q335939501T337311002
+ * 
  */
 function MLLPServer(host, port) {
 
@@ -64,8 +78,11 @@ function MLLPServer(host, port) {
                 var data2 = hl7.parseString(message);
                 console.log("Message:\r\n" + message + "\r\n\r\n");
                 /**
+                 * MLLP HL7 Event. Fired when a HL7 Message is received.
                  * @event MLLPServer#hl7
-                 * @type string
+                 * @type {string}
+                 * @property {string} message string containing the HL7 Message (see example below)
+                 * @example MSH|^~\&|XXXX|C|SOMELAB|SOMELAB|20080511103530||ORU^R01|Q335939501T337311002|P|2.3|||
                  */
                 self.emit('hl7', message);
                 var ack = ackn(data2, "AA");

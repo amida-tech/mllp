@@ -40,9 +40,11 @@ describe('test server with client data exchange', function () {
 
     it('receives exactly the information sent', function (done) {
 
+        //This event seems to be regestered at runtime rather than in sequence.
+        //Get fired during send and receives test as well as this one.
         server.on('hl7', function (data) {
+            console.log("FIRED: " + data);
             assert.equal(hl7, data);
-            done();
         });
 
         var client = net.connect({
@@ -55,6 +57,7 @@ describe('test server with client data exchange', function () {
         client.on('data', function (dat) {
             console.log('ack received');
             client.end();
+            done();
         });
     });
 });
