@@ -46,16 +46,14 @@ function MLLPServer(host, port) {
             //strip separators
             console.log("DATA:\nfrom " + sock.remoteAddress + ':\n' + data.split("\r").join("\n"));
             //console.log("Message Start\r\n" + data + "\r\nMessage End\r\n");
-           
+
             if (data.indexOf(VT) > -1) {
                 message = '';
             }
-            
-            message += data.replace(VT, '');
-             
 
-            if (data.indexOf(FS + CR) > -1)
-            {
+            message += data.replace(VT, '');
+
+            if (data.indexOf(FS + CR) > -1) {
                 message = message.replace(FS + CR, '');
                 var data2 = hl7.parseString(message);
                 console.log("Message:\r\n" + message + "\r\n\r\n");
@@ -67,7 +65,6 @@ function MLLPServer(host, port) {
             //console.log("DATA:\nfrom " + sock.remoteAddress + ':\n' + data.split("\r").join("\n"));
             //console.log();
 
-            
             //console.log("ACK:\n" + ack.split("\r").join("\n"));
             //console.log();
 

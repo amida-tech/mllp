@@ -37,8 +37,8 @@ describe('test server with client data exchange', function () {
     it('receives exactly the information sent', function (done) {
 
         server.on('hl7', function (data) {
-           assert.equal(hl7, data);
-           done();
+            assert.equal(hl7, data);
+            done();
         });
 
         var client = net.connect({
