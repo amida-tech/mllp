@@ -3,6 +3,10 @@ var fs = require('fs');
 var mllp = require('../index.js');
 var net = require('net');
 
+var VT = String.fromCharCode(0x0b);
+var FS = String.fromCharCode(0x1c);
+var CR = String.fromCharCode(0x0d);
+
 describe('test server with client data exchange', function () {
     var hl7 = '';
     var server;
@@ -20,7 +24,7 @@ describe('test server with client data exchange', function () {
             },
             function () { //'connect' listener
                 console.log('client connected');
-                client.write('@' + hl7 + '@@');
+                client.write(VT + hl7 + FS + CR);
             });
 
         client.on('data', function (data) {
@@ -45,7 +49,7 @@ describe('test server with client data exchange', function () {
             port: 6969
         }, function () {
             console.log('client connected');
-            client.write('@' + hl7 + '@@');
+            client.write(VT + hl7 + FS + CR);
         });
 
         client.on('data', function (dat) {
