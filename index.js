@@ -10,16 +10,17 @@ var VT = String.fromCharCode(0x0b);
 var FS = String.fromCharCode(0x1c);
 var CR = String.fromCharCode(0x0d);
 
-function MLLPServer(host, port) {
+function MLLPServer(host, port, logger) {
 
     var self = this;
 
     var HOST = host || '127.0.0.1';
     var PORT = port || 6969;
+    logger = logger || console.log;
 
     var Server = net.createServer(function (sock) {
 
-        console.log('CONNECTED: ' + sock.remoteAddress + ':' + sock.remotePort);
+        logger('CONNECTED: ' + sock.remoteAddress + ':' + sock.remotePort);
 
         function ackn(data, ack_type) {
 
@@ -50,16 +51,16 @@ function MLLPServer(host, port) {
 
             var ack = ackn(data2, "AA");
 
-            console.log("DATA:\nfrom " + sock.remoteAddress + ':\n' + data.split("\r").join("\n"));
-            console.log();
+            logger("DATA:\nfrom " + sock.remoteAddress + ':\n' + data.split("\r").join("\n"));
+            logger();
 
             sock.write(VT + ack + FS + CR);
-            console.log("ACK:\n" + ack.split("\r").join("\n"));
-            console.log();
+            logger("ACK:\n" + ack.split("\r").join("\n"));
+            logger();
         });
 
         sock.on('close', function (data) {
-            console.log('CLOSED: ' + sock.remoteAddress + ' ' + sock.remotePort);
+            logger('CLOSED: ' + sock.remoteAddress + ' ' + sock.remotePort);
         });
 
     });
@@ -69,12 +70,12 @@ function MLLPServer(host, port) {
             host: receivingHost,
             port: receivingPort
         }, function () {
-            console.log('Sending data to ' + receivingHost + ':' + receivingPort);
+            logger('Sending data to ' + receivingHost + ':' + receivingPort);
             sendingClient.write(VT + hl7Data + FS + CR);
         });
 
         sendingClient.on('data', function (rawAckData) {
-            console.log(receivingHost + ':' + receivingPort + ' ACKED data');
+            logger(receivingHost + ':' + receivingPort + ' ACKED data');
 
             var ackData = rawAckData
                 .toString() // Buffer -> String
@@ -88,14 +89,14 @@ function MLLPServer(host, port) {
         });
 
         sendingClient.on('error', function (error) {
-            console.log(receivingHost + ':' + receivingPort + ' couldn\'t process data');
+            logger(receivingHost + ':' + receivingPort + ' couldn\'t process data');
 
             callback(error, null);
             _terminate();
         });
 
         var _terminate = function () {
-            console.log('closing connection with ' + receivingHost + ':' + receivingPort);
+            logger('closing connection with ' + receivingHost + ':' + receivingPort);
             sendingClient.end();
         };
     };
