@@ -82,3 +82,31 @@ describe('test server with client data exchange', function () {
         });
     });
 });
+
+describe("sends a large message for data exchange", function () {
+    var hl7Message = '';
+
+    before(function () {
+        hl7Message = fs.readFileSync('./test/fixtures/largeA08.txt').toString().split('\n').join('\r');
+
+        server = new mllp.MLLPServer('127.0.0.1', 1235);
+    });
+
+    describe("sending a large A08 Message and Receiving an Ack Back", function () {
+        var ack, error;
+
+        beforeEach(function (done) {
+            server.send("127.0.0.1", 1234, hl7Message, function (err, ackData) {
+                error = err;
+                ack = ackData;
+                done();
+            });
+        });
+
+        it("receives a HL7 Message", function () {
+            server.on('hl7', function (data) {
+                assert.equal(hl7Message, data);
+            });
+        });
+    });
+});

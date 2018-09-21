@@ -10,8 +10,6 @@ var VT = String.fromCharCode(0x0b);
 var FS = String.fromCharCode(0x1c);
 var CR = String.fromCharCode(0x0d);
 
-
-
 /**
  * @constructor MLLPServer
  * @param {string} host a resolvable hostname or IP Address
@@ -36,17 +34,11 @@ var CR = String.fromCharCode(0x0d);
  */
 function MLLPServer(host, port, logger) {
 
-
     var self = this;
     this.message = '';
     var HOST = host || '127.0.0.1';
     var PORT = port || 6969;
     logger = logger || console.log;
-
-    var _terminate = function () {
-        logger('closing connection with ' + receivingHost + ':' + receivingPort);
-        sendingClient.end();
-    };
 
     var Server = net.createServer(function (sock) {
 
@@ -76,15 +68,15 @@ function MLLPServer(host, port, logger) {
             logger("DATA:\nfrom " + sock.remoteAddress + ':\n' + data.split("\r").join("\n"));
 
             if (data.indexOf(VT) > -1) {
-                message = '';
+                self.message = '';
             }
 
-            this.message += data.replace(VT, '');
+            self.message += data.replace(VT, '');
 
             if (data.indexOf(FS + CR) > -1) {
-                this.message = message.replace(FS + CR, '');
-                var data2 = hl7.parseString(this.message);
-                logger("Message:\r\n" + this.message + "\r\n\r\n");
+                self.message = self.message.replace(FS + CR, '');
+                var data2 = hl7.parseString(self.message);
+                logger("Message:\r\n" + self.message + "\r\n\r\n");
                 /**
                  * MLLP HL7 Event. Fired when a HL7 Message is received.
                  * @event MLLPServer#hl7
@@ -92,7 +84,7 @@ function MLLPServer(host, port, logger) {
                  * @property {string} message string containing the HL7 Message (see example below)
                  * @example MSH|^~\&|XXXX|C|SOMELAB|SOMELAB|20080511103530||ORU^R01|Q335939501T337311002|P|2.3|||
                  */
-                self.emit('hl7', this.message);
+                self.emit('hl7', self.message);
                 var ack = ackn(data2, "AA");
                 sock.write(VT + ack + FS + CR);
             }
@@ -113,6 +105,11 @@ function MLLPServer(host, port, logger) {
             logger('Sending data to ' + receivingHost + ':' + receivingPort);
             sendingClient.write(VT + hl7Data + FS + CR);
         });
+
+        var _terminate = function () {
+            logger('closing connection with ' + receivingHost + ':' + receivingPort);
+            sendingClient.end();
+        };
 
         sendingClient.on('data', function (rawAckData) {
             logger(receivingHost + ':' + receivingPort + ' ACKED data');
