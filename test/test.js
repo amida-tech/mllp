@@ -96,7 +96,7 @@ describe("sends a large message for data exchange", function () {
         var ack, error;
 
         beforeEach(function (done) {
-            server.send("127.0.0.1", 1234, hl7Message, function (err, ackData) {
+            server.send("127.0.0.1", 1235, hl7Message, function (err, ackData) {
                 error = err;
                 ack = ackData;
                 done();
