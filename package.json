@@ -14,12 +14,7 @@
   "bugs": {
     "url": "https://github.com/amida-tech/mllp/issues"
   },
-  "licenses": [
-    {
-      "type": "Apache 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-    }
-  ],
+  "license": "Apache-2.0",
   "devDependencies": {
     "grunt": "1.0.x",
     "grunt-contrib-jshint": "1.1.x",

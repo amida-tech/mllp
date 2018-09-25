@@ -87,7 +87,7 @@ describe("sends a large message for data exchange", function () {
     var hl7Message = '';
 
     before(function () {
-        hl7Message = fs.readFileSync('./test/fixtures/largeA08.txt').toString().split('\n').join('\r');
+        hl7Message = fs.readFileSync('./test/fixtures/LargeA08.txt').toString().split('\n').join('\r');
 
         server = new mllp.MLLPServer('127.0.0.1', 1235);
     });
