@@ -3,6 +3,10 @@ var fs = require('fs');
 var mllp = require('../index.js');
 var net = require('net');
 
+var VT = String.fromCharCode(0x0b);
+var FS = String.fromCharCode(0x1c);
+var CR = String.fromCharCode(0x0d);
+
 describe('test server with client data exchange', function () {
     var hl7 = '';
     var server;
@@ -74,6 +78,34 @@ describe('test server with client data exchange', function () {
                 // no need for assertion... this is the success callback
                 // if it doesn't get invoked, the test will not pass.
                 done();
+            });
+        });
+    });
+});
+
+describe("sends a large message for data exchange", function () {
+    var hl7Message = '';
+
+    before(function () {
+        hl7Message = fs.readFileSync('./test/fixtures/largeA08.txt').toString().split('\n').join('\r');
+
+        server = new mllp.MLLPServer('127.0.0.1', 1235);
+    });
+
+    describe("sending a large A08 Message and Receiving an Ack Back", function () {
+        var ack, error;
+
+        beforeEach(function (done) {
+            server.send("127.0.0.1", 1235, hl7Message, function (err, ackData) {
+                error = err;
+                ack = ackData;
+                done();
+            });
+        });
+
+        it("receives a HL7 Message", function () {
+            server.on('hl7', function (data) {
+                assert.equal(hl7Message, data);
             });
         });
     });

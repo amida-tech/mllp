@@ -10,10 +10,32 @@ var VT = String.fromCharCode(0x0b);
 var FS = String.fromCharCode(0x1c);
 var CR = String.fromCharCode(0x0d);
 
+/**
+ * @constructor MLLPServer
+ * @param {string} host a resolvable hostname or IP Address
+ * @param {integer} port a valid free port for the server to listen on.
+ * @param {object} logger
+ * 
+ * @fires MLLPServer#hl7  
+ * 
+ * @example
+ * var server = new MLLPServer('hl7server.mydomain', 3333, console.log);
+ * 
+ * server.on('hl7', function(message) {
+ *  console.log("Message: " + message);
+ *  // INSERT Unmarshalling or Processing here
+ * });
+ * 
+ * @example
+ * <caption>An ACK is sent back to the server</caption>
+ *  MSH|^~\&|SOMELAB|SOMELAB|SOMELAB|SOMELAB|20080511103530||ORU^R01|Q335939501T337311002|P|2.3|||
+ *  MSA|AA|Q335939501T337311002
+ * 
+ */
 function MLLPServer(host, port, logger) {
 
     var self = this;
-
+    this.message = '';
     var HOST = host || '127.0.0.1';
     var PORT = port || 6969;
     logger = logger || console.log;
@@ -23,7 +45,6 @@ function MLLPServer(host, port, logger) {
         logger('CONNECTED: ' + sock.remoteAddress + ':' + sock.remotePort);
 
         function ackn(data, ack_type) {
-
             //get message ID
             var msg_id = data[0][10];
 
@@ -44,19 +65,30 @@ function MLLPServer(host, port, logger) {
         sock.on('data', function (data) {
             data = data.toString();
             //strip separators
-            data = data.substring(1, data.length - 2);
-            var data2 = hl7.parseString(data);
-
-            self.emit('hl7', data);
-
-            var ack = ackn(data2, "AA");
-
             logger("DATA:\nfrom " + sock.remoteAddress + ':\n' + data.split("\r").join("\n"));
-            logger();
 
-            sock.write(VT + ack + FS + CR);
-            logger("ACK:\n" + ack.split("\r").join("\n"));
-            logger();
+            if (data.indexOf(VT) > -1) {
+                self.message = '';
+            }
+
+            self.message += data.replace(VT, '');
+
+            if (data.indexOf(FS + CR) > -1) {
+                self.message = self.message.replace(FS + CR, '');
+                var data2 = hl7.parseString(self.message);
+                logger("Message:\r\n" + self.message + "\r\n\r\n");
+                /**
+                 * MLLP HL7 Event. Fired when a HL7 Message is received.
+                 * @event MLLPServer#hl7
+                 * @type {string}
+                 * @property {string} message string containing the HL7 Message (see example below)
+                 * @example MSH|^~\&|XXXX|C|SOMELAB|SOMELAB|20080511103530||ORU^R01|Q335939501T337311002|P|2.3|||
+                 */
+                self.emit('hl7', self.message);
+                var ack = ackn(data2, "AA");
+                sock.write(VT + ack + FS + CR);
+            }
+
         });
 
         sock.on('close', function (data) {
@@ -73,6 +105,11 @@ function MLLPServer(host, port, logger) {
             logger('Sending data to ' + receivingHost + ':' + receivingPort);
             sendingClient.write(VT + hl7Data + FS + CR);
         });
+
+        var _terminate = function () {
+            logger('closing connection with ' + receivingHost + ':' + receivingPort);
+            sendingClient.end();
+        };
 
         sendingClient.on('data', function (rawAckData) {
             logger(receivingHost + ':' + receivingPort + ' ACKED data');
@@ -94,11 +131,6 @@ function MLLPServer(host, port, logger) {
             callback(error, null);
             _terminate();
         });
-
-        var _terminate = function () {
-            logger('closing connection with ' + receivingHost + ':' + receivingPort);
-            sendingClient.end();
-        };
     };
 
     Server.listen(PORT, HOST);
