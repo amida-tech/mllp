@@ -48,7 +48,7 @@ function MLLPServer(host, port, logger) {
             //get message ID
             var msg_id = data[0][10];
 
-            var header = [data[0]];
+            var header = [data[0].slice()];
 
             //switch around sender/receiver names
             header[0][3] = data[0][5];
