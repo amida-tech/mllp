@@ -1,20 +1,20 @@
 {
-  "name": "keeps-mllp",
-  "version": "1.0.0",
+  "name": "mllp-node",
+  "version": "2.0.0",
   "description": "MLLP (HL7) implementation in Node.js",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Dmitry Kachaev <dmitry.kachaev@gmail.com>, forked by Filipe Ribeiro and Miguel Ferreira",
+  "author": "Dmitry Kachaev <dmitry.kachaev@gmail.com> (http://github.com/kachok)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/keeps/mllp.git"
+    "url": "git@github.com:amida-tech/mllp.git"
   },
   "bugs": {
-    "url": "https://github.com/keeps/mllp/issues"
+    "url": "https://github.com/amida-tech/mllp/issues"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "devDependencies": {
     "grunt": "1.0.x",
     "grunt-contrib-jshint": "1.1.x",
@@ -34,14 +34,5 @@
   },
   "dependencies": {
     "hl7": "1.x.x"
-  },
-  "homepage": "https://github.com/keeps/mllp#readme",
-  "directories": {
-    "test": "test"
-  },
-  "keywords": [
-    "mllp",
-    "keeps",
-    "node"
-  ]
+  }
 }
