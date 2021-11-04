@@ -1,38 +1,40 @@
 {
-  "name": "mllp-node",
-  "version": "2.0.0",
+  "name": "@b-techbw/mllp",
+  "version": "2.0.2",
   "description": "MLLP (HL7) implementation in Node.js",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Dmitry Kachaev <dmitry.kachaev@gmail.com> (http://github.com/kachok)",
+  "author": "Piotr Mankowski pmanko@uw.edu>",
   "repository": {
-    "type": "git",
-    "url": "git@github.com:amida-tech/mllp.git"
+    "url": "git://github.com/b-techbw/mllp.git"
   },
   "bugs": {
-    "url": "https://github.com/amida-tech/mllp/issues"
+    "url": "https://github.com/b-techbw/mllp/issues"
   },
   "license": "Apache-2.0",
   "devDependencies": {
+    "chai": "4.1.x",
+    "chai-datetime": "1.5.x",
+    "coveralls": "3.0.x",
     "grunt": "1.0.x",
     "grunt-contrib-jshint": "1.1.x",
     "grunt-contrib-watch": "1.1.x",
-    "grunt-mocha-test": "0.13.x",
-    "grunt-jsbeautifier": "^0.2.x",
-    "mocha": "5.2.x",
-    "chai": "4.1.x",
-    "chai-datetime": "1.5.x",
     "grunt-coveralls": "*",
     "grunt-istanbul-coverage": "*",
-    "coveralls": "3.0.x",
+    "grunt-jsbeautifier": "^0.2.x",
+    "grunt-mocha-test": "0.13.x",
+    "mocha": "5.2.x",
     "mocha-lcov-reporter": "1.3.x"
   },
   "engines": {
-    "node": "8.x.x"
+    "node": ">=14.x.x"
   },
   "dependencies": {
     "hl7": "1.x.x"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }
