@@ -146,8 +146,11 @@ export class MllpServer extends TypedEmitter<MllpEvents> {
         });
     }
 
-    listen() {
-        this.server.listen(this.port, this.host);
+    listen(callback?: Function) {
+        if(callback)
+            this.server.listen(this.port, this.host, () => { callback() })
+        else
+            this.server.listen(this.port, this.host)
     }
 
     close(callback: Function) {
