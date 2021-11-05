@@ -1,9 +1,14 @@
 {
   "name": "@b-techbw/mllp",
-  "version": "3.0.1",
+  "version": "3.0.3",
   "description": "MLLP (HL7) implementation in Node.js",
-  "main": "dist/mllp.js",
-  "types": "dist/mllp.d.ts",
+  "main": "lib/mllp.js",
+  "types": "lib/mllp.d.ts",
+  "files": [
+    "/lib",
+    "README.md",
+    "RELEASENOTES.md"
+  ],
   "scripts": {
     "test": "mocha -r ts-node/register src/test/*.ts"
   },

@@ -1,11 +1,6 @@
 mllp
 ====
 
-[![NPM](https://nodei.co/npm/mllp-node.png)](https://nodei.co/npm/mllp-node/)
-
-[![Build Status](https://travis-ci.org/amida-tech/mllp.svg)](https://travis-ci.org/amida-tech/mllp)
-[![Coverage Status](https://coveralls.io/repos/amida-tech/mllp/badge.png)](https://coveralls.io/r/amida-tech/mllp)
-
 HL7's MLLP (Minimum Lower Layer Protocol) server implementation in Node.js.
 
 
