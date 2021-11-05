@@ -38,7 +38,6 @@
     "node": ">=14.x.x"
   },
   "dependencies": {
-    "@types/expect": "^24.3.0",
     "hl7": "1.x.x",
     "tiny-typed-emitter": "^2.1.0"
   },
