@@ -19,3 +19,5 @@ npm-debug.log
 .anvil
 
 dist
+
+*.log
