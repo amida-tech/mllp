@@ -1,6 +1,6 @@
 {
   "name": "@b-techbw/mllp",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "MLLP (HL7) implementation in Node.js",
   "main": "lib/mllp.js",
   "types": "lib/mllp.d.ts",
