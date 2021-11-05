@@ -1,10 +1,11 @@
 {
   "name": "@b-techbw/mllp",
-  "version": "2.0.2",
+  "version": "3.0.0-alpha.1",
   "description": "MLLP (HL7) implementation in Node.js",
-  "main": "index.js",
+  "main": "dist/mllp.js",
+  "types": "dist/mllp.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -r ts-node/register src/test/*.ts"
   },
   "author": "Piotr Mankowski pmanko@uw.edu>",
   "repository": {
@@ -13,26 +14,31 @@
   "bugs": {
     "url": "https://github.com/b-techbw/mllp/issues"
   },
+  "mocha": {
+    "require": ["ts-node/register"]
+  },
   "license": "Apache-2.0",
   "devDependencies": {
+    "@types/chai": "^4.2.22",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.11.6",
     "chai": "4.1.x",
     "chai-datetime": "1.5.x",
     "coveralls": "3.0.x",
-    "grunt": "1.0.x",
-    "grunt-contrib-jshint": "1.1.x",
-    "grunt-contrib-watch": "1.1.x",
-    "grunt-coveralls": "*",
-    "grunt-istanbul-coverage": "*",
-    "grunt-jsbeautifier": "^0.2.x",
-    "grunt-mocha-test": "0.13.x",
+    "cross-env": "^7.0.3",
     "mocha": "5.2.x",
-    "mocha-lcov-reporter": "1.3.x"
+    "mocha-lcov-reporter": "1.3.x",
+    "ts-mocha": "^8.0.0",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
   },
   "engines": {
     "node": ">=14.x.x"
   },
   "dependencies": {
-    "hl7": "1.x.x"
+    "@types/expect": "^24.3.0",
+    "hl7": "1.x.x",
+    "tiny-typed-emitter": "^2.1.0"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

@@ -17,3 +17,5 @@ coverage
 npm-debug.log
 
 .anvil
+
+dist

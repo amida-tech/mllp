@@ -24,33 +24,35 @@ Listen on predefined port for HL7 messages in format:
 ### Prerequisites
 
 - Node.js (v0.10+) and NPM
-- Grunt.js
 
 ```
-# you need Node.js and Grunt.js installed
+# you need Node.js installed
 
-# install dependencies and build
-npm install
-grunt
+# install dependencies and test
+yarn
+yarn test
 ```
 
 ## Usage
 
 See `example.js`:
 
-```javascript
-var mllp = require('mllp-node');
+```ts
+import { MllpServer } from "./mllp";
 
-var server = new mllp.MLLPServer('127.0.0.1', 1234);
+const server: MllpServer = new MllpServer('127.0.0.1', 1234);
+
+server.listen()
 
 // Subscribe to inbound messages
-server.on('hl7', function (data){
+server.on('hl7', (data) => {
     console.log('received payload:', data);
 });
 
 // Send outbound messages
-server.send('127.0.0.1', 4321, 'outbound-hl7-message', function (err, ackData) {
+server.send('127.0.0.1', 4321, 'outbound-hl7-message', (err: any, ackData: any) => {
     // async callback code here
+    console.log(`Sent message!\nerr: ${err}\nackData: ${ackData}`)
 });
 ```
 

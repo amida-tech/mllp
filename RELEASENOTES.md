@@ -12,3 +12,8 @@ This is the initial release of this library.
 
 - Set minimum node version to be 8
 - Large message support
+
+# v3.0.0 - November 4, 2021
+
+- Updated to Typescript
+- Updated minimum node version 
