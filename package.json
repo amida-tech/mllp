@@ -1,6 +1,6 @@
 {
   "name": "@b-techbw/mllp",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0",
   "description": "MLLP (HL7) implementation in Node.js",
   "main": "dist/mllp.js",
   "types": "dist/mllp.d.ts",
@@ -15,7 +15,9 @@
     "url": "https://github.com/b-techbw/mllp/issues"
   },
   "mocha": {
-    "require": ["ts-node/register"]
+    "require": [
+      "ts-node/register"
+    ]
   },
   "license": "Apache-2.0",
   "devDependencies": {
