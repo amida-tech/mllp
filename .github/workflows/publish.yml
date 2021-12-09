@@ -1,12 +1,10 @@
-name: CI/CD
+name: Publish
 on:
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
   release:
     types: [created]
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest 
     permissions: 
       contents: read
@@ -16,10 +14,11 @@ jobs:
       # Setup .npmrc file to publish to GitHub Packages
       - uses: actions/setup-node@v2
         with:
-          node-version: '12.x'
+          node-version: '14.x'
           registry-url: 'https://npm.pkg.github.com'
           # Defaults to the user or organization that owns the workflow file
       - run: yarn
+      - run: yarn build
       - run: yarn test
       - run: yarn publish
         env:

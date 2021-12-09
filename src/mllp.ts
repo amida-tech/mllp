@@ -45,14 +45,14 @@ export class MllpServer extends TypedEmitter<MllpEvents> {
 
         this.host = host || '127.0.0.1'
         this.port = port || 6969
-        this.logger = logger || console.log;
+        this.logger = logger || console;
 
         this.server = net.createServer(this.serverListener.bind(this))
 
     }
 
     private serverListener(sock: net.Socket) {
-        this.logger('CONNECTED: ' + sock.remoteAddress + ':' + sock.remotePort);
+        this.logger.info('CONNECTED: ' + sock.remoteAddress + ':' + sock.remotePort);
 
         sock.on('data',  (data: any) => {
             let { msg, ack } = this.handleData(data.toString())
@@ -69,7 +69,7 @@ export class MllpServer extends TypedEmitter<MllpEvents> {
              sock.write(MllpServer.VT + this.ackn(ack, "AA") + MllpServer.FS + MllpServer.CR);
         })
         sock.on('close',  (data) => {
-            this.logger('CLOSED: ' + sock.remoteAddress + ' ' + sock.remotePort);
+            this.logger.info('CLOSED: ' + sock.remoteAddress + ' ' + sock.remotePort);
         });
 
     }
@@ -106,7 +106,7 @@ export class MllpServer extends TypedEmitter<MllpEvents> {
         if (msg.indexOf(MllpServer.FS + MllpServer.CR) > -1) {
             message = message.replace(MllpServer.FS + MllpServer.CR, '');
             ackData = hl7.parseString(message);
-            this.logger("Message:\r\n" + message + "\r\n\r\n");
+            this.logger.info("Message:\r\n" + message + "\r\n\r\n");
         }
 
         return { msg: message, ack: ackData };
@@ -117,16 +117,16 @@ export class MllpServer extends TypedEmitter<MllpEvents> {
             host: receivingHost,
             port: receivingPort
         }, () => {
-            this.logger('Sending data to ' + receivingHost + ':' + receivingPort);
+            this.logger.info('Sending data to ' + receivingHost + ':' + receivingPort);
             sendingClient.write(MllpServer.VT + hl7Data + MllpServer.FS + MllpServer.CR);
         });
 
         let _terminate = () => {
-            this.logger('closing connection with ' + receivingHost + ':' + receivingPort);
+            this.logger.info('closing connection with ' + receivingHost + ':' + receivingPort);
             sendingClient.end();
         };
         sendingClient.on('data', (rawAckData) => {
-            this.logger(receivingHost + ':' + receivingPort + ' ACKED data');
+            this.logger.info(receivingHost + ':' + receivingPort + ' ACKED data');
 
             var ackData = rawAckData
                 .toString() // Buffer -> String
@@ -139,7 +139,7 @@ export class MllpServer extends TypedEmitter<MllpEvents> {
             _terminate();
         });
         sendingClient.on('error', (error) => {
-            this.logger(receivingHost + ':' + receivingPort + ' couldn\'t process data');
+            this.logger.info(receivingHost + ':' + receivingPort + ' couldn\'t process data');
 
             callback(error, null);
             _terminate();
