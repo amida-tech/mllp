@@ -1,7 +1,7 @@
 import * as net from 'net'
 import { TypedEmitter } from 'tiny-typed-emitter';
 
-const hl7: any = require('hl7') 
+const hl7: any = require('hl7')
 
 /**
  * @constructor MllpServer
@@ -54,9 +54,9 @@ export class MllpServer extends TypedEmitter<MllpEvents> {
     private serverListener(sock: net.Socket) {
         this.logger.info('CONNECTED: ' + sock.remoteAddress + ':' + sock.remotePort);
 
-        sock.on('data',  (data: any) => {
+        sock.on('data', (data: any) => {
             let { msg, ack } = this.handleData(data.toString())
-            
+
             /**
              * MLLP HL7 Event. Fired when a HL7 Message is received.
              * @event MllpServer#hl7
@@ -64,30 +64,37 @@ export class MllpServer extends TypedEmitter<MllpEvents> {
              * @property {string} message string containing the HL7 Message (see example below)
              * @example MSH|^~\&|XXXX|C|SOMELAB|SOMELAB|20080511103530||ORU^R01|Q335939501T337311002|P|2.3|||
              */
-             this.emit('hl7', msg);
+            this.emit('hl7', msg);
 
-             sock.write(MllpServer.VT + this.ackn(ack, "AA") + MllpServer.FS + MllpServer.CR);
+            sock.write(MllpServer.VT + this.ackn(ack, "AA") + MllpServer.FS + MllpServer.CR);
         })
-        sock.on('close',  (data) => {
+        sock.on('close', (data) => {
             this.logger.info('CLOSED: ' + sock.remoteAddress + ' ' + sock.remotePort);
         });
 
     }
 
     private ackn(data: any, ack_type: string): string {
-        //get message ID
-        var msg_id = data[0][10];
+        var result;
 
-        var header = [data[0]];
+        try {
+            //get message ID
+            var msg_id = data[0][10];
 
-        //switch around sender/receiver names
-        header[0][3] = data[0][5];
-        header[0][4] = data[0][6];
-        header[0][5] = data[0][3];
-        header[0][6] = data[0][4];
+            var header = [data[0]];
 
-        var result = hl7.serializeJSON(header);
-        result = result + "\r" + "MSA|" + ack_type + "|" + msg_id;
+            //switch around sender/receiver names
+            header[0][3] = data[0][5];
+            header[0][4] = data[0][6];
+            header[0][5] = data[0][3];
+            header[0][6] = data[0][4];
+
+            result = hl7.serializeJSON(header);
+            result = result + "\r" + "MSA|" + ack_type + "|" + msg_id;
+        } catch (error) {
+            this.logger.error("Could not generate ACK - sending AE type.");
+            result = "\r" + "MSA|AE|";
+        }
 
         return result;
     }
@@ -102,7 +109,7 @@ export class MllpServer extends TypedEmitter<MllpEvents> {
         }
 
         message += msg.replace(MllpServer.VT, '');
-        
+
         if (msg.indexOf(MllpServer.FS + MllpServer.CR) > -1) {
             message = message.replace(MllpServer.FS + MllpServer.CR, '');
             ackData = hl7.parseString(message);
@@ -147,7 +154,7 @@ export class MllpServer extends TypedEmitter<MllpEvents> {
     }
 
     listen(callback?: Function) {
-        if(callback)
+        if (callback)
             this.server.listen(this.port, this.host, () => { callback() })
         else
             this.server.listen(this.port, this.host)
